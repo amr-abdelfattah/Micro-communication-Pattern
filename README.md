@@ -1,7 +1,7 @@
-## Spring Microservices in Action - Second Edition. Chapter 8
+## Spring Boot - Micro-Communication And BFF Backend
 
 # Introduction
-Welcome to Spring Microservices in Action, Chapter 8.  Chapter 8 introduces the concept of a API gateway. API gateways are using to enforce consistent policies and actions on all service calls. With this chapter we are going to introduce Spring Cloud Gateway.
+This Project contains the cloud native components for building a system with two microservices.
 
 1.  A Spring Cloud Config server that is deployed as Docker container and can manage a services configuration information using a file system/ classpath or GitHub-based repository.
 2. A Eureka server running as a Spring-Cloud based service. This service will allow multiple service instances to register with it. Clients that need to call a service will use Eureka to lookup the physical location of the target service.
@@ -24,15 +24,14 @@ To clone and run this application, you'll need [Git](https://git-scm.com), [Mave
 # Clone this repository
 $ git clone https://github.com/ihuaylupo/manning-smia
 
-# Go into the repository, by changing to the directory where you have downloaded the 
-# chapter 8 source code and select whether you want the initial or final configuration
-$ cd chapter8
+# Go into the repository, by changing to the directory where you have downloaded it
+$ cd [Project main folder]
 
-# To build the code examples for Chapter 8 as a docker image, open a command-line 
+# To build the code as a docker image, open a command-line 
 # window and execute the following command:
 $ mvn clean package dockerfile:build
 
-# Now we are going to use docker-compose to start the actual image.  To start the docker image, stay in the directory containing  your chapter 8 source code and  Run the following command: 
+# Now we are going to use docker-compose to start the actual image.  To start the docker image, stay in the directory containing the source code and Run the following command: 
 $ docker-compose -f docker/docker-compose.yml up
 ```
 
