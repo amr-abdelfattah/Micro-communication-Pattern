@@ -1,0 +1,66 @@
+server:
+  port: 8072
+ 
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://eurekaserver:8070/eureka/
+      
+spring:
+  main.web-application-type: reactive
+  cloud:
+    loadbalancer.ribbon.enabled: false
+    gateway:
+        routes:
+#        - id: organization-service
+#          uri: lb://organization-service
+#          predicates:
+#          - Path=/api/amr/s2/**
+#          filters:
+#          - RewritePath=/api/amr/s2/(?<path>.*), /$\{path}
+#        - id: licensing-service
+#          uri: lb://licensing-service
+#          predicates:
+#          - Path=/api/amr/s1/**
+#          filters:
+#          - RewritePath=/api/amr/s1/(?<path>.*), /$\{path}
+#          - SetResponseHeader= assignment9, amr
+        - id: mobilebff-service
+          uri: lb://mobilebff-service
+          predicates:
+          - Path=/api/bff/mobile/**
+          filters:
+          - RewritePath=/api/bff/mobile/(?<path>.*), /$\{path}
+        - id: webbff-service
+          uri: lb://webbff-service
+          predicates:
+          - Path=/api/bff/web/**
+          filters:
+          - RewritePath=/api/bff/web/(?<path>.*), /$\{path}
+        - id: web-licensing-service
+          uri: lb://licensing-service
+          predicates:
+          - Path=/api/micro/web/**
+          filters:
+          - RewritePath=/api/micro/web/(?<path>.*), /$\{path}
+          - AddRequestHeader= client-type, 2
+        - id: mobile-licensing-service
+          uri: lb://licensing-service
+          predicates:
+          - Path=/api/micro/mobile/**
+          filters:
+          - RewritePath=/api/micro/mobile/(?<path>.*), /$\{path}
+          - AddRequestHeader= client-type, 1
+
+       
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        
+        

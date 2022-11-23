@@ -1,0 +1,119 @@
+version: '2.1'
+services:
+  configserver:
+    image: configserver:0.0.1-SNAPSHOT
+    ports:
+       - "8071:8071"
+    healthcheck:
+      test: ""
+      interval: 8s
+      timeout: 8s
+      retries: 2
+    environment:
+      ENCRYPT_KEY: "fje83Ki8403Iod87dne7Yjsl3THueh48jfuO9j4U2hf64Lo"
+    networks:
+      backend:
+        aliases:
+          - "configserver"
+  eurekaserver:
+    image: eurekaserver:0.0.1-SNAPSHOT
+    ports:
+      - "8070:8070"
+    healthcheck:
+      test: ""
+      interval: 8s
+      timeout: 8s
+      retries: 2
+    depends_on:
+      configserver:
+        condition: service_healthy
+    networks:
+      backend:
+        aliases:
+          - "eurekaserver"
+  gatewayserver:
+    image: gatewayserver:0.0.1-SNAPSHOT
+    ports:
+      - "8072:8072"
+    environment:
+      PROFILE: "default"
+      SERVER_PORT: "8072"
+      CONFIGSERVER_URI: "http://configserver:8071"
+      EUREKASERVER_URI: "http://eurekaserver:8070/eureka/"
+      EUREKASERVER_PORT: "8070"
+      CONFIGSERVER_PORT: "8071"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+    networks:
+      backend:
+        aliases:
+          - "gateway"
+  licensingservice:
+    image: licensing-service:0.0.3-SNAPSHOT
+    environment:
+      PROFILE: "dev"
+      CONFIGSERVER_URI: "http://configserver:8071"
+      CONFIGSERVER_PORT:   "8071"
+      ENCRYPT_KEY:       "IMSYMMETRIC"
+      SERVER_PORT: "8088"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    ports:
+      - "8088:8088"
+    networks:
+      - backend
+  organizationservice:
+    image: organization-service:0.0.1-SNAPSHOT
+    environment:
+      PROFILE: "dev"
+      CONFIGSERVER_URI: "http://configserver:8071"
+      CONFIGSERVER_PORT:   "8071"
+      SERVER_PORT: "8081"
+      ENCRYPT_KEY:       "IMSYMMETRIC"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    networks:
+      - backend
+
+  bffweb:
+    image: webbff-service:0.0.1-SNAPSHOT
+    environment:
+      PROFILE: "dev"
+      CONFIGSERVER_URI: "http://configserver:8071"
+      CONFIGSERVER_PORT:   "8071"
+      SERVER_PORT: "8082"
+      ENCRYPT_KEY:       "IMSYMMETRIC"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+    networks:
+      - backend
+
+  bffmobile:
+    image: mobilebff-service:0.0.1-SNAPSHOT
+    environment:
+      PROFILE: "dev"
+      CONFIGSERVER_URI: "http://configserver:8071"
+      CONFIGSERVER_PORT:   "8071"
+      SERVER_PORT: "8083"
+      ENCRYPT_KEY:       "IMSYMMETRIC"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
